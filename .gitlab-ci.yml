@@ -79,9 +79,9 @@ deploy_staging:
     - job: docker_publish
       artifacts: true
   script:
-    - echo "Deploying to staging..."
-    - echo "Using image: $IMAGE_REF"
-    - echo "Replace this with your real staging deploy command (SSH/Kubernetes/VM/etc)."
+    - 'echo "Deploying to staging..."'
+    - 'echo "Using image: $IMAGE_REF"'
+    - 'echo "Replace this with your real staging deploy command (SSH/Kubernetes/VM/etc)."'
   environment:
     name: staging
   rules:
@@ -104,9 +104,9 @@ deploy_production:
     - job: docker_publish
       artifacts: true
   script:
-    - echo "Deploying to production..."
-    - echo "Using image: $IMAGE_REF"
-    - echo "Replace this with your real production deploy command."
+    - 'echo "Deploying to production..."'
+    - 'echo "Using image: $IMAGE_REF"'
+    - 'echo "Replace this with your real production deploy command."'
   environment:
     name: production
   rules:
