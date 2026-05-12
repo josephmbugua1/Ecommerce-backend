@@ -3,6 +3,7 @@ image: maven:3.9.8-eclipse-temurin-21
 stages:
   - test
   - build
+  - docker
   - deploy_staging
   - review
   - deploy_production
@@ -46,12 +47,40 @@ build:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH
 
-deploy_staging:
-  stage: deploy_staging
+docker_publish:
+  stage: docker
+  image: docker:27.1.2
+  services:
+    - name: docker:27.1.2-dind
+      command: ["--tls=false"]
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
   needs:
     - job: build
   script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - export IMAGE_TAG="$CI_COMMIT_SHORT_SHA"
+    - export IMAGE_REF="$CI_REGISTRY_IMAGE:$IMAGE_TAG"
+    - docker build --pull -t "$IMAGE_REF" -t "$CI_REGISTRY_IMAGE:latest" .
+    - docker push "$IMAGE_REF"
+    - docker push "$CI_REGISTRY_IMAGE:latest"
+    - echo "IMAGE_TAG=$IMAGE_TAG" > docker.env
+    - echo "IMAGE_REF=$IMAGE_REF" >> docker.env
+  artifacts:
+    reports:
+      dotenv: docker.env
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+deploy_staging:
+  stage: deploy_staging
+  needs:
+    - job: docker_publish
+      artifacts: true
+  script:
     - echo "Deploying to staging..."
+    - echo "Using image: $IMAGE_REF"
     - echo "Replace this with your real staging deploy command (SSH/Kubernetes/VM/etc)."
   environment:
     name: staging
@@ -72,8 +101,11 @@ deploy_production:
   stage: deploy_production
   needs:
     - job: production_approval
+    - job: docker_publish
+      artifacts: true
   script:
     - echo "Deploying to production..."
+    - echo "Using image: $IMAGE_REF"
     - echo "Replace this with your real production deploy command."
   environment:
     name: production
