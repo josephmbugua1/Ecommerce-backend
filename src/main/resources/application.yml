@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: Ecommerce-website
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ecommerce_dB
+    username: postgres
+    password: root123
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        multiTenancy: SCHEMA
+    open-in-view: false
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/init.sql
+
+app:
+  security:
+    jwt:
+      secret: dev-secret-key-change-me
+      expiration-seconds: 3600
+      refresh-expiration-seconds: 86400
+  payment:
+    stripe:
+      secret-key: sk_test_xxxxxxxxxxxxx
+      webhook-secret: whsec_xxxxxxxxxxxxx
