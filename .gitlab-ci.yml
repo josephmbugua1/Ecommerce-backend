@@ -102,11 +102,13 @@ deploy_staging:
     - echo "Connecting to $PROD_SERVER_IP"
     - ssh-keyscan -H "$PROD_SERVER_IP" >> ~/.ssh/known_hosts
   script:
-    - >
-      ssh ec2-user@"$PROD_SERVER_IP" "cd $PROD_DEPLOY_PATH &&
-      printf 'IMAGE_TAG=%s\nPOSTGRES_PASSWORD=%s\nREDIS_PASSWORD=%s\n' '$IMAGE_TAG' '$POSTGRES_PASSWORD' '$REDIS_PASSWORD' > .env.production &&
-      docker compose pull &&
-      docker compose -f docker-compose.production.yml up -d --remove-orphans"
+    - ssh ec2-user@"$PROD_SERVER_IP" "
+        cd $PROD_DEPLOY_PATH &&
+        ls -la &&
+        printf 'IMAGE_TAG=%s\nPOSTGRES_PASSWORD=%s\nREDIS_PASSWORD=%s\n' '$IMAGE_TAG' '$POSTGRES_PASSWORD' '$REDIS_PASSWORD' > .env.production &&
+        docker compose pull &&
+        docker compose -f docker-compose.production.yml up -d --remove-orphans
+      "
   environment:
     name: staging
   rules:
@@ -139,11 +141,13 @@ deploy_production:
     - echo "Connecting to $PROD_SERVER_IP"
     - ssh-keyscan -H "$PROD_SERVER_IP" >> ~/.ssh/known_hosts
   script:
-    - >
-      ssh ec2-user@"$PROD_SERVER_IP" "cd $PROD_DEPLOY_PATH &&
-      printf 'IMAGE_TAG=%s\nPOSTGRES_PASSWORD=%s\nREDIS_PASSWORD=%s\n' '$IMAGE_TAG' '$POSTGRES_PASSWORD' '$REDIS_PASSWORD' > .env.production &&
-      docker compose pull &&
-      docker compose -f docker-compose.production.yml up -d --remove-orphans"
+    - ssh ec2-user@"$PROD_SERVER_IP" "
+        cd $PROD_DEPLOY_PATH &&
+        ls -la &&
+        printf 'IMAGE_TAG=%s\nPOSTGRES_PASSWORD=%s\nREDIS_PASSWORD=%s\n' '$IMAGE_TAG' '$POSTGRES_PASSWORD' '$REDIS_PASSWORD' > .env.production &&
+        docker compose pull &&
+        docker compose -f docker-compose.production.yml up -d --remove-orphans
+      "
   environment:
     name: production
   rules:
