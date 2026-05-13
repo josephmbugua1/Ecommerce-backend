@@ -107,6 +107,7 @@ deploy_staging:
         set -e
         cd /opt/ecommerce
         ls -la
+        docker login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" registry.gitlab.com
         printf 'IMAGE_TAG=%s\nPOSTGRES_PASSWORD=%s\nREDIS_PASSWORD=%s\n' "${IMAGE_TAG}" "${POSTGRES_PASSWORD}" "${REDIS_PASSWORD}" > .env.production
         docker compose -f /opt/ecommerce/docker-compose.production.yml pull
         docker compose -f /opt/ecommerce/docker-compose.production.yml up -d --remove-orphans
@@ -148,6 +149,7 @@ deploy_production:
         set -e
         cd /opt/ecommerce
         ls -la
+        docker login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" registry.gitlab.com
         printf 'IMAGE_TAG=%s\nPOSTGRES_PASSWORD=%s\nREDIS_PASSWORD=%s\n' "${IMAGE_TAG}" "${POSTGRES_PASSWORD}" "${REDIS_PASSWORD}" > .env.production
         docker compose -f /opt/ecommerce/docker-compose.production.yml pull
         docker compose -f /opt/ecommerce/docker-compose.production.yml up -d --remove-orphans
