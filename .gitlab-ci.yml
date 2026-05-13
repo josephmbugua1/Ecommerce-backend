@@ -73,8 +73,8 @@ docker_publish:
     - job: build
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
-    - export IMAGE_TAG="$CI_COMMIT_SHORT_SHA"
-    - export IMAGE_REF="$CI_REGISTRY_IMAGE:$IMAGE_TAG"
+    - export IMAGE_TAG="$CI_REGISTRY_IMAGE:latest"
+    - export IMAGE_REF="$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
     - docker build --pull -t "$IMAGE_REF" -t "$CI_REGISTRY_IMAGE:latest" .
     - docker push "$IMAGE_REF"
     - docker push "$CI_REGISTRY_IMAGE:latest"
@@ -108,7 +108,16 @@ deploy_staging:
         cd /opt/ecommerce
         ls -la
         docker login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" registry.gitlab.com
-        printf 'IMAGE_TAG=%s\nPOSTGRES_PASSWORD=%s\nREDIS_PASSWORD=%s\n' "${IMAGE_TAG}" "${POSTGRES_PASSWORD}" "${REDIS_PASSWORD}" > .env.production
+        cat > /opt/ecommerce/.env << EOF_ENV
+        IMAGE_TAG=${IMAGE_TAG}
+        POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        REDIS_PASSWORD=${REDIS_PASSWORD}
+        EOF_ENV
+        cat > /opt/ecommerce/.env.production << EOF_ENV
+        IMAGE_TAG=${IMAGE_TAG}
+        POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        REDIS_PASSWORD=${REDIS_PASSWORD}
+        EOF_ENV
         docker compose -f /opt/ecommerce/docker-compose.production.yml pull
         docker compose -f /opt/ecommerce/docker-compose.production.yml up -d --remove-orphans
       EOF
@@ -150,7 +159,16 @@ deploy_production:
         cd /opt/ecommerce
         ls -la
         docker login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" registry.gitlab.com
-        printf 'IMAGE_TAG=%s\nPOSTGRES_PASSWORD=%s\nREDIS_PASSWORD=%s\n' "${IMAGE_TAG}" "${POSTGRES_PASSWORD}" "${REDIS_PASSWORD}" > .env.production
+        cat > /opt/ecommerce/.env << EOF_ENV
+        IMAGE_TAG=${IMAGE_TAG}
+        POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        REDIS_PASSWORD=${REDIS_PASSWORD}
+        EOF_ENV
+        cat > /opt/ecommerce/.env.production << EOF_ENV
+        IMAGE_TAG=${IMAGE_TAG}
+        POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        REDIS_PASSWORD=${REDIS_PASSWORD}
+        EOF_ENV
         docker compose -f /opt/ecommerce/docker-compose.production.yml pull
         docker compose -f /opt/ecommerce/docker-compose.production.yml up -d --remove-orphans
       EOF
