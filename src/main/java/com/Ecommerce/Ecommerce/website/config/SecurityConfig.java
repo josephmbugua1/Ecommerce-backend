@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/products", "/products/*", "/store/**", "/payments/webhook/**").permitAll()
+                        .requestMatchers("/auth/**", "/products", "/products/*", "/store/**", "/payments/webhook/**", "/actuator/health", "/actuator/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("PLATFORM_ADMIN")
                         .requestMatchers("/customers/**").hasAnyRole("PLATFORM_ADMIN", "TENANT_ADMIN")
                         .requestMatchers("/products/**", "/categories/**", "/settings/**").hasAnyRole("PLATFORM_ADMIN", "TENANT_ADMIN", "TENANT_STAFF")
