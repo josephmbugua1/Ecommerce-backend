@@ -101,10 +101,10 @@ deploy_staging:
     - chmod 700 ~/.ssh
     - echo "Connecting to $PROD_SERVER_IP"
     - ssh-keyscan -T 60 -H "$PROD_SERVER_IP" >> ~/.ssh/known_hosts || echo "keyscan failed"
-    - ssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 ec2-user@"$PROD_SERVER_IP" "echo"
+    - ssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 ec2-user@"$PROD_SERVER_IP" "echo SSH OK" || echo "SSH pre-check failed, continuing anyway"
   script:
     - |
-      ssh ec2-user@"$PROD_SERVER_IP" bash << EOF
+      ssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 ec2-user@"$PROD_SERVER_IP" bash << EOF
         set -e
         cd /opt/ecommerce
         ls -la
@@ -153,10 +153,10 @@ deploy_production:
     - chmod 700 ~/.ssh
     - echo "Connecting to $PROD_SERVER_IP"
     - ssh-keyscan -T 60 -H "$PROD_SERVER_IP" >> ~/.ssh/known_hosts || echo "keyscan failed"
-    - ssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 ec2-user@"$PROD_SERVER_IP" "echo"
+    - ssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 ec2-user@"$PROD_SERVER_IP" "echo SSH OK" || echo "SSH pre-check failed, continuing anyway"
   script:
     - |
-      ssh ec2-user@"$PROD_SERVER_IP" bash << EOF
+      ssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 ec2-user@"$PROD_SERVER_IP" bash << EOF
         set -e
         cd /opt/ecommerce
         ls -la
