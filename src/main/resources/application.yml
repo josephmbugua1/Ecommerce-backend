@@ -1,10 +1,12 @@
+server:
+  port: 8081
 spring:
   application:
     name: Ecommerce-website
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/ecommerce_dB}
     username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:root123}
+    password: ${DB_PASSWORD:root1234}
   jpa:
     hibernate:
       ddl-auto: validate
